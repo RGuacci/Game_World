@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ $title ?? config('app.name') }}</title>
-    
+
     {{-- Font di LiveWire Flux --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
@@ -19,6 +19,10 @@
 
 <body>
     <livewire:navbar />
+    @if (session('success'))
+        <flux:callout variant="success" icon="check-circle" heading="Operazione completata" :text="session('success')"
+            dismissible />
+    @endif
     {{ $slot }}
     @livewireScripts
     @fluxScripts

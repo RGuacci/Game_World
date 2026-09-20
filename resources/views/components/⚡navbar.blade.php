@@ -3,7 +3,14 @@
 use Livewire\Component;
 
 new class extends Component {
-    //
+    public function logout()
+    {
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+
+        return $this->redirectRoute('home');
+    }
 };
 ?>
 
@@ -13,9 +20,9 @@ new class extends Component {
     <flux:header container class="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
-        <flux:brand href="#" logo="https://fluxui.dev/img/demo/logo.png" name="Game World"
+        <flux:brand href="#" logo="{{ asset('images/logo.png') }}" name="Game World"
             class="max-lg:hidden dark:hidden" />
-        <flux:brand href="#" logo="https://fluxui.dev/img/demo/dark-mode-logo.png" name="Game World"
+        <flux:brand href="#" logo="{{ asset('images/logo.png') }}" name="Game World"
             class="max-lg:hidden! hidden dark:flex" />
 
         <flux:navbar class="-mb-px max-lg:hidden">
@@ -27,26 +34,28 @@ new class extends Component {
 
         <flux:spacer />
 
-        <flux:navbar class="me-4">
-            <flux:navbar.item icon="magnifying-glass" href="#" label="Search" />
-            <flux:navbar.item class="max-lg:hidden" icon="cog-6-tooth" href="#" label="Settings" />
-            <flux:navbar.item class="max-lg:hidden" icon="information-circle" href="#" label="Help" />
-        </flux:navbar>
+        @Auth
+            <flux:dropdown class="top flex items-start">
+                <flux:profile avatar="{{ asset('images/avatar.png') }}" />
+                <flux:menu>
+                    <flux:menu.radio.group>
+                        <flux:menu.radio checked>{{ auth()->user()->name }}</flux:menu.radio>
+                    </flux:menu.radio.group>
 
-        <flux:dropdown class="top flex items-start">
-            <flux:profile avatar="{{ asset('images/avatar.png') }}" />
+                    <flux:menu.separator />
 
-            <flux:menu>
-                <flux:menu.radio.group>
-                    <flux:menu.radio checked>Utente</flux:menu.radio>
+                    <flux:menu.item class="max-lg:hidden" icon="cog-6-tooth" href="#" label="Settings">Settings
+                    </flux:menu.item>
+                    <flux:button class="p-5 mt-2" wire:click="logout" icon="arrow-right-start-on-rectangle">Logout</flux:button>
+                </flux:menu>
+            </flux:dropdown>
+        @else
+            <flux:navbar class="me-4">
+                <flux:navbar.item href="{{ route('register') }}">Sign Up</flux:navbar.item>
+                <flux:navbar.item href="{{ route('login') }}">Login</flux:navbar.item>
+            </flux:navbar>
 
-                </flux:menu.radio.group>
-
-                <flux:menu.separator />
-
-                <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
-            </flux:menu>
-        </flux:dropdown>
+        @endAuth
     </flux:header>
 
     <flux:sidebar sticky collapsible="mobile"
